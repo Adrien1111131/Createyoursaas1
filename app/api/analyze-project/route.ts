@@ -11,72 +11,62 @@ interface AnalyzeProjectRequest {
 
 // Construire le prompt pour l'analyse approfondie du projet
 const buildAnalysisPrompt = (opportunity: GrokOpportunity): string => {
-  return `🎯 MISSION : Analyse approfondie et génération d'un CDC détaillé pour ce projet SaaS francophone
+  return `🚀 PROJET SAAS : ${opportunity.nom}
 
-📋 PROJET À ANALYSER :
-**Nom** : ${opportunity.nom}
-**Description** : ${opportunity.description}
-**Problème résolu** : ${opportunity.probleme_resolu}
-**Stack technique** : ${opportunity.stack_technique}
-**Complexité** : ${opportunity.complexite}
-**Temps de développement** : ${opportunity.temps_dev}
-**Revenus estimés** : ${opportunity.mrr_arr}
-**Marché cible** : ${opportunity.type_marche}
-**Opportunité francophone** : ${opportunity.opportunite}
+💡 CONCEPT
+- Description : ${opportunity.description}
+- Problème résolu : ${opportunity.probleme_resolu}
+- Marché : ${opportunity.type_marche}
+- Revenus estimés : ${opportunity.mrr_arr}
 
-🔍 ANALYSE REQUISE :
+⚡ WORKFLOW VIBE CODING
+- Commencer TOUJOURS en PLAN MODE
+- Discuter la stratégie avec l'IA
+- Valider l'approche avant de passer en ACT MODE
+- Faire des points de contrôle réguliers
 
-Génère un **Cahier des Charges (CDC) complet et professionnel** qui inclut :
+🛠️ STACK TECHNIQUE
+- Technologies : ${opportunity.stack_technique}
+- Complexité : ${opportunity.complexite}
+- Temps estimé : ${opportunity.temps_dev}
 
-## 1. CONTEXTE ET OBJECTIFS
-- Analyse du marché francophone
-- Positionnement concurrentiel
-- Objectifs business clairs et mesurables
+📋 BONNES PRATIQUES
+- Sauvegardes régulières du projet
+- Créer des branches pour les features importantes
+- Commits fréquents et bien nommés
+- Revenir à la dernière version stable si besoin
 
-## 2. FONCTIONNALITÉS DÉTAILLÉES
-- Fonctionnalités core (MVP)
-- Fonctionnalités avancées (V2)
-- User stories détaillées
-- Wireframes conceptuels (description textuelle)
+🎯 FEATURES MVP
+- Liste courte et précise des fonctionnalités essentielles
+- Priorités claires
+- Estimations réalistes
+- Points de validation
 
-## 3. SPÉCIFICATIONS TECHNIQUES
-- Architecture recommandée
-- Stack technique justifiée
-- Base de données et modèles
-- APIs et intégrations nécessaires
-- Sécurité et conformité RGPD
+⚙️ ARCHITECTURE
+- Structure du projet claire et modulaire
+- Composants réutilisables
+- API endpoints bien définis
+- Base de données optimisée
 
-## 4. ADAPTATION FRANCOPHONE
-- Spécificités réglementaires (RGPD, CNIL, etc.)
-- Intégrations locales (Sage, URSSAF, banques françaises)
-- Localisation (langue, devises, formats)
-- Avantages concurrentiels vs solutions anglaises
+🔒 SÉCURITÉ & CONFORMITÉ
+- RGPD et CNIL
+- Authentification sécurisée
+- Protection des données
+- Backups automatisés
 
-## 5. PLAN DE DÉVELOPPEMENT
-- Phases de développement
-- Estimation des tâches
-- Technologies et outils recommandés
-- Ressources nécessaires
+🚀 DÉPLOIEMENT
+- Environnements (dev, staging, prod)
+- CI/CD pipeline
+- Monitoring
+- Scalabilité
 
-## 6. STRATÉGIE DE LANCEMENT
-- Plan de validation (MVP)
-- Stratégie pricing pour le marché francophone
-- Canaux d'acquisition
-- Métriques de succès
+⚠️ POINTS D'ATTENTION :
+- Toujours commencer par planifier (PLAN MODE)
+- Sauvegarder régulièrement
+- Tester chaque feature
+- Valider avant de passer aux étapes suivantes
 
-## 7. RISQUES ET MITIGATION
-- Risques techniques identifiés
-- Risques business
-- Plans de mitigation
-
-⚠️ EXIGENCES :
-- Sois **critique et objectif**
-- Identifie les **vraies difficultés**
-- Propose des **solutions concrètes**
-- Adapte spécifiquement au **marché francophone**
-- Reste **réaliste** sur les délais et coûts
-
-📝 FORMAT : Rédige un CDC professionnel, structuré et actionnable.`
+📝 FORMAT : CDC adapté au vibe coding, clair et actionnable.`
 }
 
 export async function POST(request: NextRequest) {
@@ -112,7 +102,21 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en développement SaaS et en analyse de marché francophone. Tu génères des cahiers des charges détaillés, critiques et réalistes. Tu es objectif et identifies les vraies difficultés sans édulcorer.'
+            content: `Tu es un expert en vibe coding et développement SaaS. 
+
+STYLE :
+- Ton direct et concis
+- Instructions claires et actionnables
+- Focus sur les bonnes pratiques
+- Approche étape par étape
+
+POINTS CLÉS :
+- Importance du PLAN MODE avant l'action
+- Sauvegardes régulières du code
+- Tests et validations fréquents
+- Documentation claire et concise
+
+Génère un CDC adapté aux développeurs qui utilisent le vibe coding, en mettant l'accent sur la planification, les sauvegardes et la validation progressive.`
           },
           {
             role: 'user',

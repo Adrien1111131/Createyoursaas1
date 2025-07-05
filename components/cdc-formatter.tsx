@@ -76,17 +76,20 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
   // Fonction pour obtenir l'icône appropriée selon le titre
   const getTitleIcon = (title: string) => {
     const titleLower = title.toLowerCase()
-    if (titleLower.includes('objectif') || titleLower.includes('but')) {
+    if (titleLower.includes('concept') || titleLower.includes('projet')) {
+      return <Lightbulb className="h-5 w-5 text-yellow-600" />
+    }
+    if (titleLower.includes('workflow') || titleLower.includes('plan')) {
       return <Target className="h-5 w-5 text-blue-600" />
     }
-    if (titleLower.includes('fonctionnalit') || titleLower.includes('feature')) {
-      return <Zap className="h-5 w-5 text-purple-600" />
-    }
-    if (titleLower.includes('technique') || titleLower.includes('technolog')) {
+    if (titleLower.includes('stack') || titleLower.includes('tech')) {
       return <Cog className="h-5 w-5 text-orange-600" />
     }
-    if (titleLower.includes('utilisateur') || titleLower.includes('client')) {
-      return <Users className="h-5 w-5 text-green-600" />
+    if (titleLower.includes('pratique') || titleLower.includes('sauvegarde')) {
+      return <CheckCircle className="h-5 w-5 text-green-600" />
+    }
+    if (titleLower.includes('feature') || titleLower.includes('mvp')) {
+      return <Zap className="h-5 w-5 text-purple-600" />
     }
     if (titleLower.includes('planning') || titleLower.includes('délai')) {
       return <Calendar className="h-5 w-5 text-red-600" />
@@ -97,9 +100,9 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
   // Fonction pour détecter les sous-titres
   const isSubtitle = (line: string) => {
     const keywords = [
-      'description', 'fonctionnalité', 'interface', 'backend', 'frontend',
-      'base de données', 'sécurité', 'performance', 'déploiement',
-      'maintenance', 'évolution', 'contrainte', 'exigence'
+      'concept', 'workflow', 'stack', 'pratiques', 'features',
+      'sauvegarde', 'plan mode', 'act mode', 'qualité',
+      'priorités', 'architecture', 'dépendances', 'branches'
     ]
     return keywords.some(keyword => 
       line.toLowerCase().includes(keyword) && line.length < 100
@@ -109,8 +112,9 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
   // Fonction pour détecter les éléments importants
   const isImportant = (line: string) => {
     const importantKeywords = [
-      'important', 'critique', 'essentiel', 'obligatoire', 'requis',
-      'attention', 'note', 'remarque', 'warning', 'alert'
+      'important', 'sauvegarde', 'plan mode', 'act mode', 'backup',
+      'attention', 'warning', 'branches', 'version stable', 'qualité',
+      'git', 'commit', 'push', 'validation'
     ]
     return importantKeywords.some(keyword => 
       line.toLowerCase().includes(keyword)
@@ -123,7 +127,8 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
       'React', 'Next.js', 'TypeScript', 'JavaScript', 'Node.js', 'MongoDB', 'PostgreSQL',
       'API', 'REST', 'GraphQL', 'JWT', 'OAuth', 'HTTPS', 'SSL',
       'responsive', 'mobile', 'desktop', 'SEO', 'performance',
-      'utilisateur', 'admin', 'client', 'authentification', 'autorisation'
+      'PLAN MODE', 'ACT MODE', 'vibe coding', 'backup', 'git',
+      'branches', 'commit', 'push', 'stable', 'MVP'
     ]
     
     let highlightedText = text
@@ -203,16 +208,28 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
         }
       })}
       
-      {/* Footer avec badge de qualité */}
+      {/* Footer avec badges de qualité */}
       <div className="mt-8 pt-6 border-t border-gray-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Settings className="h-4 w-4 text-gray-500" />
-            <span className="text-sm text-gray-600">Cahier des charges généré automatiquement</span>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Settings className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">CDC optimisé pour le vibe coding</span>
+            </div>
+            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-300">
+              ⚡ Vibe Coding Ready
+            </Badge>
           </div>
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-            ✅ Formaté et optimisé
-          </Badge>
+          
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <CheckCircle className="h-4 w-4 text-green-500" />
+            <span>Commencez en PLAN MODE pour discuter de la stratégie</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <CheckCircle className="h-4 w-4 text-green-500" />
+            <span>Faites des sauvegardes régulières du projet</span>
+          </div>
         </div>
       </div>
     </div>

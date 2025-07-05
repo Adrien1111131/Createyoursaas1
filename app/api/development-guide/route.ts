@@ -37,33 +37,45 @@ interface DevelopmentGuideRequest {
 const developmentSteps = [
   {
     id: 'setup',
-    title: 'Configuration initiale',
+    title: 'Setup du projet',
     tool: 'cursor',
-    description: 'Mise en place de l\'environnement de développement'
+    description: 'Installation des dépendances et configuration'
   },
   {
-    id: 'backend',
-    title: 'Développement Backend',
+    id: 'structure',
+    title: 'Structure de base',
     tool: 'cursor',
-    description: 'API, base de données et logique métier'
-  },
-  {
-    id: 'frontend',
-    title: 'Interface utilisateur',
-    tool: 'cursor',
-    description: 'Développement avec Cursor'
+    description: 'Organisation des dossiers et composants'
   },
   {
     id: 'landing',
     title: 'Landing page',
     tool: 'v0',
-    description: 'Création avec v0.dev (Vercel)'
+    description: 'Design de la landing page avec v0.dev'
+  },
+  {
+    id: 'features',
+    title: 'Fonctionnalités',
+    tool: 'cursor',
+    description: 'Développement des features principales'
+  },
+  {
+    id: 'auth',
+    title: 'Authentification',
+    tool: 'cursor',
+    description: 'Système de connexion'
+  },
+  {
+    id: 'api',
+    title: 'Intégration API',
+    tool: 'cursor',
+    description: 'Connexion avec le backend'
   },
   {
     id: 'deploy',
     title: 'Déploiement',
-    tool: 'general',
-    description: 'Mise en production'
+    tool: 'cursor',
+    description: 'Mise en production sur Vercel'
   }
 ]
 
@@ -71,161 +83,100 @@ const developmentSteps = [
 const buildDevelopmentPrompt = (project: FinalizedProject, currentStep: number, userMessage: string, conversationContext: string = ''): string => {
   const step = developmentSteps[currentStep]
   
-  return `🎯 TU ES UN COACH DE DÉVELOPPEMENT SAAS EXPERT - Guide interactif étape par étape
+return `Tu es un expert en vibe coding qui guide le développement de ${project.nom}.
 
-📋 CONTEXTE DU PROJET :
-**Nom** : ${project.nom}
-**Description** : ${project.description}
-**Problème résolu** : ${project.probleme_resolu}
-**Stack technique** : ${project.stack_technique}
-**Complexité** : ${project.complexite}
-**Temps de développement** : ${project.temps_dev}
-**Type de marché** : ${project.type_marche}
+CONTEXTE :
+- App : ${project.description}
+- Stack : ${project.stack_technique}
+- Étape : ${step.title} (${currentStep + 1}/7)
 
-📝 CDC COMPLET :
-${project.cdc.substring(0, 1500)}... [CDC disponible]
+MESSAGE : "${userMessage}"
+HISTORIQUE : ${conversationContext}
 
-🎯 ÉTAPE ACTUELLE : ${step.title} (${step.tool}) - Étape ${currentStep + 1}/5
-
-💬 MESSAGE UTILISATEUR : "${userMessage}"
-📚 CONTEXTE CONVERSATION : ${conversationContext}
-
-🚀 TON RÔLE DE COACH INTERACTIF :
-
-**RÈGLES FONDAMENTALES** :
-1. 🔄 **DÉCOMPOSE EN MICRO-ÉTAPES** - Jamais plus de 2-3 actions à la fois
-2. ⏳ **ATTENDS CONFIRMATION** - Toujours demander "Avez-vous terminé cette étape ?"
-3. ✅ **VALIDE LES RÉSULTATS** - Demander des preuves (screenshots, code, tests)
-4. 🎯 **SOIS ULTRA-SPÉCIFIQUE** - Prompts précis avec contexte complet
-5. 🔄 **FEEDBACK LOOP** - Ajuste selon les retours de l'utilisateur
+RÈGLES :
+1. Prompts courts (max 200 mots)
+2. Instructions claires et directes
+3. Une tâche à la fois
+4. Demander confirmation
+5. Adapter selon feedback
 
 ${step.tool === 'cursor' ? `
-🔵 **MODE CURSOR - VIBE CODING 2024** :
-
-**RÈGLES VIBE CODING** :
-- ⚡ **Composition over Classes** - Préfère les fonctions pures
-- 🪝 **Hooks First** - Custom hooks pour la logique métier
-- 🎯 **Single Responsibility** - Un composant = une responsabilité
-- 📦 **Barrel Exports** - index.ts pour les exports propres
-- 🔒 **TypeScript Strict** - Types explicites partout
-- 🎨 **Tailwind Utility-First** - Pas de CSS custom sauf exception
-- 📱 **Mobile-First** - Design responsive par défaut
-- ⚡ **Performance First** - Lazy loading, memoization
-- 🧪 **Test-Driven** - Tests unitaires pour la logique critique
-
-**FORMAT PROMPT CURSOR OPTIMISÉ** :
+FORMAT PROMPT CURSOR :
 \`\`\`
-# 🚀 ${project.nom} - ${step.title}
+# ${project.nom} - ${step.title}
 
-## 🎯 Mission spécifique
-[Action précise à accomplir - 1 seule chose]
+TÂCHE :
+[Action précise et unique à accomplir]
 
-## 📋 Contexte projet
-- **App** : ${project.description}
-- **Stack** : ${project.stack_technique}
-- **Problème résolu** : ${project.probleme_resolu}
+CONTEXTE :
+- App : ${project.description}
+- Stack : ${project.stack_technique}
 
-## 🛠️ Instructions Cursor (Vibe Coding)
-1. **Étape 1** : [Action ultra-précise avec exemple]
-2. **Étape 2** : [Action ultra-précise avec exemple]
-3. **Étape 3** : [Action ultra-précise avec exemple]
+INSTRUCTIONS :
+1. [Action spécifique]
+2. [Action spécifique]
+3. [Action spécifique]
 
-## 📁 Structure attendue
-\`\`\`
-[Structure de fichiers exacte]
-\`\`\`
-
-## 💻 Code de référence
+CODE :
 \`\`\`typescript
-[Exemple de code starter]
+[Code de référence]
 \`\`\`
 
-## ✅ Critères de validation
-- [ ] [Critère 1 vérifiable]
-- [ ] [Critère 2 vérifiable]
-- [ ] [Critère 3 vérifiable]
-
-## 🧪 Tests à implémenter
-[Tests spécifiques pour valider]
+Dites "C'est fait" quand terminé ou "J'ai un problème" si besoin d'aide.
 \`\`\`
-
-**APRÈS LE PROMPT** :
-"📋 **Prochaine étape** : Copiez ce prompt dans Cursor, exécutez-le, puis revenez me dire :
-1. ✅ 'C'est fait' - si tout fonctionne
-2. ❌ 'J'ai un problème' - si vous rencontrez des erreurs
-3. 📸 Partagez un screenshot de votre résultat
-
-Je vous attends pour valider avant de passer à la suite ! 🚀"
 ` : step.tool === 'v0' ? `
-🟣 **MODE V0.DEV - LANDING FRANÇAISE** :
-
-**RÈGLES LANDING FRANÇAISE** :
-- 🇫🇷 **Copywriting français** - Ton professionnel mais accessible
-- 💰 **Prix en euros** - Adapté au pouvoir d'achat français
-- 📱 **Mobile-first** - 70% du trafic français est mobile
-- 🎨 **Design épuré** - Style français moderne
-- 🔒 **RGPD compliant** - Mentions légales et cookies
-- ⚡ **Performance** - Temps de chargement < 3s
-- 🎯 **Conversion optimisée** - CTA clairs et incitatifs
-
-**FORMAT PROMPT V0.DEV OPTIMISÉ** :
+FORMAT PROMPT V0.DEV :
 \`\`\`
-# 🎨 Landing Page ${project.nom} - Marché Français
+# Landing Page ${project.nom}
 
-## 🎯 Brief créatif
-**Produit** : ${project.description}
-**Cible** : ${project.type_marche} français
-**Objectif** : Conversion et inscription
+DESCRIPTION :
+${project.description}
+Type : ${project.type_marche}
 
-## 📋 Sections obligatoires
-1. **Hero** : Value proposition + CTA principal
-2. **Problème** : Pain point du marché français
-3. **Solution** : Comment ${project.nom} résout le problème
-4. **Fonctionnalités** : 3-4 features clés avec icônes
-5. **Social Proof** : Témoignages/logos clients français
-6. **Pricing** : Tarifs en euros, adapté au marché FR
-7. **FAQ** : Questions fréquentes en français
-8. **CTA Final** : Inscription/essai gratuit
+SECTIONS :
+1. Hero avec value proposition
+2. Features principales
+3. Pricing adapté au marché
+4. Call-to-action
+5. Footer avec liens
 
-## 🎨 Direction artistique
-- **Couleurs** : [Palette moderne et professionnelle]
-- **Typo** : Inter/Poppins - lisible sur mobile
-- **Style** : Moderne, épuré, trustworthy
-- **Images** : Illustrations ou photos de qualité
+STYLE :
+- Design moderne et professionnel
+- Responsive mobile-first
+- Palette de couleurs cohérente
+- Typographie lisible
 
-## 📝 Copywriting français
-- **Ton** : Professionnel mais accessible
-- **Value prop** : "[Bénéfice principal] pour [cible] français"
-- **CTA** : "Essayer gratuitement", "Commencer maintenant"
-- **Social proof** : Témoignages authentiques
+CONTENU :
+- CTA : "Commencer maintenant", "Essai gratuit"
+- Images : Illustrations modernes
+- Icônes : Set cohérent
 
-## 📱 Responsive & Performance
-- Mobile-first design
-- Temps de chargement optimisé
-- Animations subtiles
-- CTA visibles sur mobile
-
-## 🔒 Conformité française
-- Mentions légales
-- Politique de confidentialité RGPD
-- Cookies banner
-- Contact français
+Une fois la landing générée, on l'intégrera dans le projet.
 \`\`\`
-
-**APRÈS LE PROMPT** :
-"🎨 **Prochaine étape** : 
-1. Allez sur v0.dev
-2. Collez ce prompt
-3. Générez votre landing page
-4. Revenez me montrer le résultat avec un screenshot
-5. Je vous aiderai à l'optimiser si besoin
-
-Dites-moi quand c'est fait ! 🚀"
 ` : `
-⚪ **MODE DÉPLOIEMENT** :
-- Guide le déploiement étape par étape
-- Vérifie chaque configuration
-- Teste la production ensemble
+FORMAT PROMPT CURSOR :
+\`\`\`
+# ${project.nom} - ${step.title}
+
+TÂCHE :
+[Action précise et unique à accomplir]
+
+CONTEXTE :
+- App : ${project.description}
+- Stack : ${project.stack_technique}
+
+INSTRUCTIONS :
+1. [Action spécifique]
+2. [Action spécifique]
+3. [Action spécifique]
+
+CODE :
+\`\`\`typescript
+[Code de référence]
+\`\`\`
+
+Dites "C'est fait" quand terminé ou "J'ai un problème" si besoin d'aide.
+\`\`\`
 `}
 
 🎯 **COMPORTEMENT SELON LE MESSAGE** :
@@ -295,7 +246,31 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `Tu es un expert en développement SaaS spécialisé dans Cursor et v0.dev. Tu génères des prompts ultra-précis et actionnables. Tu adaptes tes réponses selon l'outil utilisé (Cursor pour le code, v0.dev pour les landing pages). Tu es pratique, détaillé et tu optimises pour la productivité.`
+            content: `Tu es un expert en vibe coding qui guide le développement étape par étape.
+
+RÈGLES :
+1. Prompts courts (max 200 mots)
+2. Une seule tâche à la fois
+3. Instructions claires et directes
+4. Code de référence pour chaque tâche
+5. Demander confirmation avant de continuer
+
+STYLE :
+- Ton amical mais professionnel
+- Phrases courtes et directes
+- Exemples de code concrets
+- Feedback rapide et constructif
+
+OUTILS :
+- Suggérer v0.dev pour les landing pages (design rapide et pro)
+- Utiliser Cursor pour le développement spécifique
+- Adapter les suggestions selon le projet
+
+Ne jamais :
+- Donner des explications longues
+- Être rigide dans la méthodologie
+- Passer à l'étape suivante sans confirmation
+- Utiliser du jargon complexe`
           },
           ...conversationHistory.slice(0, -1), // Historique sans le dernier message
           {

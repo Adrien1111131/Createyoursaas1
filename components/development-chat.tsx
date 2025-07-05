@@ -39,33 +39,45 @@ interface DevelopmentChatProps {
 const developmentSteps = [
   {
     id: 'setup',
-    title: 'Configuration initiale',
+    title: 'Setup du projet',
     tool: 'cursor',
-    description: 'Mise en place de l\'environnement de développement'
+    description: 'Installation des dépendances et configuration'
   },
   {
-    id: 'backend',
-    title: 'Développement Backend',
+    id: 'structure',
+    title: 'Structure de base',
     tool: 'cursor',
-    description: 'API, base de données et logique métier'
-  },
-  {
-    id: 'frontend',
-    title: 'Interface utilisateur',
-    tool: 'cursor',
-    description: 'Développement avec Cursor'
+    description: 'Organisation des dossiers et composants'
   },
   {
     id: 'landing',
     title: 'Landing page',
-    tool: 'v0',
-    description: 'Création avec v0.dev (Vercel)'
+    tool: 'cursor',
+    description: 'Page d\'accueil et UI de base'
+  },
+  {
+    id: 'features',
+    title: 'Fonctionnalités',
+    tool: 'cursor',
+    description: 'Développement des features principales'
+  },
+  {
+    id: 'auth',
+    title: 'Authentification',
+    tool: 'cursor',
+    description: 'Système de connexion'
+  },
+  {
+    id: 'api',
+    title: 'Intégration API',
+    tool: 'cursor',
+    description: 'Connexion avec le backend'
   },
   {
     id: 'deploy',
     title: 'Déploiement',
-    tool: 'general',
-    description: 'Mise en production'
+    tool: 'cursor',
+    description: 'Mise en production sur Vercel'
   }
 ]
 
@@ -89,28 +101,17 @@ export function DevelopmentChat({ project, currentStep, onStepComplete }: Develo
       const welcomeMessage: ChatMessage = {
         id: '1',
         role: 'assistant',
-        content: `🚀 **Bienvenue dans votre coach de développement interactif !**
+        content: `🚀 Let's code **${project.nom}** !
 
-Je suis votre guide personnel pour développer **${project.nom}** étape par étape.
+Stack : ${project.stack_technique}
+Temps : ${project.temps_dev}
 
-🎯 **Comment je fonctionne** :
-1. 📋 Je vous donne **1 tâche précise** à la fois
-2. 🛠️ Je génère un **prompt optimisé** pour Cursor/v0.dev
-3. ⏳ J'**attends votre retour** avant de continuer
-4. ✅ Je **valide** chaque étape avec vous
-5. 🔄 Je m'**adapte** selon vos résultats
+Je vais te donner les meilleurs prompts pour Cursor à chaque étape.
+Chaque prompt sera clair et direct, max 200 mots.
 
-📋 **Votre projet** :
-- **Nom** : ${project.nom}
-- **Stack** : ${project.stack_technique}
-- **Complexité** : ${project.complexite}
-- **Temps estimé** : ${project.temps_dev}
+On est à l'étape : ${developmentSteps[currentStep]?.title} (${currentStep + 1}/7)
 
-🎯 **Étape actuelle** : ${developmentSteps[currentStep]?.title} (${currentStep + 1}/5)
-
-**IMPORTANT** : Je ne passerai JAMAIS à l'étape suivante sans votre confirmation ! 
-
-Prêt à commencer ? Tapez **"commencer"** pour votre première mission ! 🚀`,
+👉 Tape "commencer" pour le premier prompt !`,
         timestamp: new Date(),
         type: 'normal'
       }
