@@ -53,7 +53,7 @@ git push origin main
 #### A. Connecter le Repository
 1. Aller sur [vercel.com](https://vercel.com)
 2. Cliquer sur "New Project"
-3. Importer depuis GitHub : `Adrien1111131/Create-your-saas`
+3. Importer depuis GitHub : `Adrien1111131/Createyoursaas1`
 4. Configurer les paramètres :
    - **Framework Preset** : Next.js
    - **Build Command** : `npm run build`
