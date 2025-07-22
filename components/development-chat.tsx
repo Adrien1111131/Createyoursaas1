@@ -5,14 +5,14 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Send, Bot, User, CheckCircle, Copy, ExternalLink, Code, Palette } from "lucide-react"
+import { Send, Bot, User, CheckCircle, Copy, ExternalLink, Code, Palette, Upload } from "lucide-react"
 
 interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
   content: string
   timestamp: Date
-  type?: 'prompt' | 'normal'
+  type?: 'prompt' | 'normal' | 'payment'
   tool?: 'cursor' | 'v0' | 'general'
 }
 
@@ -36,56 +36,18 @@ interface DevelopmentChatProps {
   onStepComplete: (stepIndex: number) => void
 }
 
-const developmentSteps = [
-  {
-    id: 'setup',
-    title: 'Setup du projet',
-    tool: 'cursor',
-    description: 'Installation des dépendances et configuration'
-  },
-  {
-    id: 'structure',
-    title: 'Structure de base',
-    tool: 'cursor',
-    description: 'Organisation des dossiers et composants'
-  },
-  {
-    id: 'landing',
-    title: 'Landing page',
-    tool: 'cursor',
-    description: 'Page d\'accueil et UI de base'
-  },
-  {
-    id: 'features',
-    title: 'Fonctionnalités',
-    tool: 'cursor',
-    description: 'Développement des features principales'
-  },
-  {
-    id: 'auth',
-    title: 'Authentification',
-    tool: 'cursor',
-    description: 'Système de connexion'
-  },
-  {
-    id: 'api',
-    title: 'Intégration API',
-    tool: 'cursor',
-    description: 'Connexion avec le backend'
-  },
-  {
-    id: 'deploy',
-    title: 'Déploiement',
-    tool: 'cursor',
-    description: 'Mise en production sur Vercel'
-  }
-]
+// Les étapes sont maintenant générées dynamiquement par l'API
+// selon le type de projet sélectionné
 
 export function DevelopmentChat({ project, currentStep, onStepComplete }: DevelopmentChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [messageCount, setMessageCount] = useState(0)
+  const [isPaid, setIsPaid] = useState(false)
+  const [isDragOver, setIsDragOver] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -96,22 +58,38 @@ export function DevelopmentChat({ project, currentStep, onStepComplete }: Develo
   }, [messages])
 
   useEffect(() => {
+    // Initialiser le compteur de messages depuis localStorage
+    const messageKey = `messages_${project.id}`
+    const savedCount = localStorage.getItem(messageKey)
+    const savedPaidStatus = localStorage.getItem(`paid_${project.id}`)
+    
+    if (savedCount) {
+      setMessageCount(parseInt(savedCount))
+    }
+    if (savedPaidStatus === 'true') {
+      setIsPaid(true)
+    }
+
     // Initialiser le chat avec le message de bienvenue interactif
     if (messages.length === 0) {
       const welcomeMessage: ChatMessage = {
         id: '1',
         role: 'assistant',
-        content: `🚀 Let's code **${project.nom}** !
+        content: `🚀 Salut ! On va créer **${project.nom}** ensemble ! 👋
 
-Stack : ${project.stack_technique}
-Temps : ${project.temps_dev}
+📝 **Projet** : ${project.description}
+🔧 **Stack** : ${project.stack_technique}
+⏱️ **Temps estimé** : ${project.temps_dev}
 
-Je vais te donner les meilleurs prompts pour Cursor à chaque étape.
-Chaque prompt sera clair et direct, max 200 mots.
+Je suis ton coach dev personnel ! Je vais te guider étape par étape avec des instructions ultra-précises pour Cursor et v0.dev.
 
-On est à l'étape : ${developmentSteps[currentStep]?.title} (${currentStep + 1}/7)
+🎯 **Mon approche** :
+- Instructions courtes et claires
+- Adaptation selon ton projet
+- Support en cas de problème
+- Encouragements à chaque étape !
 
-👉 Tape "commencer" pour le premier prompt !`,
+👉 **Tape "commencer" pour démarrer !** 🚀`,
         timestamp: new Date(),
         type: 'normal'
       }
@@ -128,8 +106,76 @@ On est à l'étape : ${developmentSteps[currentStep]?.title} (${currentStep + 1}
     }
   }
 
+  const handleCreatePayment = async () => {
+    try {
+      const response = await fetch('/api/stripe/create-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          projectId: project.id,
+          projectName: project.nom
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création du paiement')
+      }
+
+      const data = await response.json()
+      
+      // Afficher le message de paiement avec le vrai lien Stripe
+      const paymentMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: `🚀 **Débloquez la suite du développement de ${project.nom}**
+
+Vous avez utilisé vos 4 messages gratuits ! Pour continuer à recevoir des guides personnalisés et développer votre projet jusqu'au bout :
+
+💰 **15€ seulement** pour un accès illimité à ce projet
+
+✅ Instructions détaillées pour chaque étape
+✅ Prompts optimisés pour Cursor et v0.dev  
+✅ Support technique personnalisé
+✅ Suivi jusqu'au déploiement final
+
+👇 **Cliquez pour payer de manière sécurisée avec Stripe**`,
+        timestamp: new Date(),
+        type: 'payment'
+      }
+      
+      setMessages(prev => [...prev, paymentMessage])
+
+      // Rediriger vers Stripe Checkout
+      if (data.paymentUrl) {
+        window.open(data.paymentUrl, '_blank')
+      }
+
+    } catch (error) {
+      console.error('Erreur création paiement:', error)
+      
+      const errorMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: 'Désolé, une erreur s\'est produite lors de la création du lien de paiement. Veuillez réessayer.',
+        timestamp: new Date(),
+        type: 'normal'
+      }
+      
+      setMessages(prev => [...prev, errorMessage])
+    }
+  }
+
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return
+
+    // Vérifier la limite de messages
+    if (messageCount >= 4 && !isPaid) {
+      // Créer le lien de paiement
+      handleCreatePayment()
+      return
+    }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -141,6 +187,11 @@ On est à l'étape : ${developmentSteps[currentStep]?.title} (${currentStep + 1}
     setMessages(prev => [...prev, userMessage])
     setInputMessage('')
     setIsLoading(true)
+
+    // Incrémenter le compteur de messages
+    const newCount = messageCount + 1
+    setMessageCount(newCount)
+    localStorage.setItem(`messages_${project.id}`, newCount.toString())
 
     try {
       const response = await fetch('/api/development-guide', {
@@ -198,32 +249,38 @@ On est à l'étape : ${developmentSteps[currentStep]?.title} (${currentStep + 1}
     }
   }
 
-  const currentStepInfo = developmentSteps[currentStep]
-
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold flex items-center gap-2">
           <Bot className="h-5 w-5 text-blue-600" />
-          Assistant de développement
+          Coach de développement
         </h3>
         <div className="flex items-center gap-2">
-          {currentStepInfo && (
+          {/* Indicateur de messages restants */}
+          {!isPaid && (
             <Badge 
               variant="outline" 
               className={`${
-                currentStepInfo.tool === 'cursor' 
-                  ? 'bg-blue-50 text-blue-700 border-blue-300'
-                  : currentStepInfo.tool === 'v0'
-                  ? 'bg-purple-50 text-purple-700 border-purple-300'
-                  : 'bg-gray-50 text-gray-700 border-gray-300'
+                messageCount >= 3 
+                  ? 'bg-red-50 text-red-700 border-red-300'
+                  : messageCount >= 2
+                  ? 'bg-orange-50 text-orange-700 border-orange-300'
+                  : 'bg-green-50 text-green-700 border-green-300'
               }`}
             >
-              {currentStepInfo.tool === 'cursor' && <Code className="h-3 w-3 mr-1" />}
-              {currentStepInfo.tool === 'v0' && <Palette className="h-3 w-3 mr-1" />}
-              {currentStepInfo.title}
+              {4 - messageCount} messages restants
             </Badge>
           )}
+          {isPaid && (
+            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300">
+              ✅ Accès illimité
+            </Badge>
+          )}
+          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+            <Code className="h-3 w-3 mr-1" />
+            {project.nom}
+          </Badge>
         </div>
       </div>
 
@@ -351,176 +408,11 @@ On est à l'étape : ${developmentSteps[currentStep]?.title} (${currentStep + 1}
         </Button>
       </div>
 
-      {/* Boutons de validation rapide */}
-      <div className="mt-4 space-y-3">
-        {/* Boutons de retour rapide */}
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            size="sm"
-            onClick={async () => {
-              const message = '✅ C\'est fait ! Tout fonctionne parfaitement.'
-              setInputMessage(message)
-              
-              // Envoyer automatiquement le message
-              const userMessage = {
-                id: Date.now().toString(),
-                role: 'user' as const,
-                content: message,
-                timestamp: new Date()
-              }
-              
-              setMessages(prev => [...prev, userMessage])
-              setInputMessage('')
-              setIsLoading(true)
-
-              try {
-                const response = await fetch('/api/development-guide', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    project,
-                    currentStep,
-                    messages: [...messages, userMessage],
-                    userMessage: message
-                  })
-                })
-
-                if (response.ok) {
-                  const data = await response.json()
-                  const assistantMessage = {
-                    id: (Date.now() + 1).toString(),
-                    role: 'assistant' as const,
-                    content: data.response,
-                    timestamp: new Date(),
-                    type: data.type || 'normal',
-                    tool: data.tool
-                  }
-                  setMessages(prev => [...prev, assistantMessage])
-                  
-                  if (data.stepCompleted) {
-                    onStepComplete(currentStep)
-                  }
-                }
-              } catch (error) {
-                console.error('Erreur:', error)
-              } finally {
-                setIsLoading(false)
-              }
-            }}
-            className="bg-green-600 hover:bg-green-700 text-white text-xs"
-            disabled={isLoading}
-          >
-            ✅ C'est fait !
-          </Button>
-          <Button
-            size="sm"
-            onClick={async () => {
-              const message = '❌ J\'ai un problème, j\'ai besoin d\'aide'
-              setInputMessage(message)
-              
-              // Envoyer automatiquement le message
-              const userMessage = {
-                id: Date.now().toString(),
-                role: 'user' as const,
-                content: message,
-                timestamp: new Date()
-              }
-              
-              setMessages(prev => [...prev, userMessage])
-              setInputMessage('')
-              setIsLoading(true)
-
-              try {
-                const response = await fetch('/api/development-guide', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    project,
-                    currentStep,
-                    messages: [...messages, userMessage],
-                    userMessage: message
-                  })
-                })
-
-                if (response.ok) {
-                  const data = await response.json()
-                  const assistantMessage = {
-                    id: (Date.now() + 1).toString(),
-                    role: 'assistant' as const,
-                    content: data.response,
-                    timestamp: new Date(),
-                    type: data.type || 'normal',
-                    tool: data.tool
-                  }
-                  setMessages(prev => [...prev, assistantMessage])
-                  
-                  if (data.stepCompleted) {
-                    onStepComplete(currentStep)
-                  }
-                }
-              } catch (error) {
-                console.error('Erreur:', error)
-              } finally {
-                setIsLoading(false)
-              }
-            }}
-            className="bg-red-600 hover:bg-red-700 text-white text-xs"
-            disabled={isLoading}
-          >
-            ❌ J'ai un problème
-          </Button>
-        </div>
-
-        {/* Aide rapide */}
-        <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="font-medium text-blue-900 mb-2">💡 Commandes rapides :</h4>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setInputMessage('commencer')}
-              className="border-blue-300 text-blue-700 hover:bg-blue-50 text-xs"
-              disabled={isLoading}
-            >
-              🚀 commencer
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setInputMessage('prompt cursor')}
-              className="border-blue-300 text-blue-700 hover:bg-blue-50 text-xs"
-              disabled={isLoading}
-            >
-              💻 prompt cursor
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setInputMessage('prompt v0')}
-              className="border-blue-300 text-blue-700 hover:bg-blue-50 text-xs"
-              disabled={isLoading}
-            >
-              🎨 prompt v0
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setInputMessage('étape suivante')}
-              className="border-green-300 text-green-700 hover:bg-green-50 text-xs"
-              disabled={isLoading}
-            >
-              ➡️ étape suivante
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setInputMessage('📸 Voici mon screenshot')}
-              className="border-purple-300 text-purple-700 hover:bg-purple-50 text-xs"
-              disabled={isLoading}
-            >
-              📸 screenshot
-            </Button>
-          </div>
+      {/* Zone de capture d'écran */}
+      <div className="mt-4">
+        <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <span className="text-sm text-gray-600">💡 Astuce :</span>
+          <span className="text-sm text-gray-700">Glissez une capture d'écran ici ou tapez "screenshot" pour partager votre avancement</span>
         </div>
       </div>
     </Card>

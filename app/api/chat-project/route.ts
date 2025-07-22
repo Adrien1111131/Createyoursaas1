@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GrokOpportunity } from '@/lib/grok-service'
+import { Opportunity } from '@/lib/grok-service'
 
-const GROK_API_KEY = process.env.GROK_API_KEY
+const XAI_API_KEY = process.env.XAI_API_KEY || process.env.GROK_API_KEY
 const GROK_API_URL = 'https://api.x.ai/v1/chat/completions'
-const GROK_MODEL = 'grok-3-latest'
+const GROK_MODEL = 'grok-4-0709'
 
 interface ChatMessage {
   id: string
@@ -13,14 +13,14 @@ interface ChatMessage {
 }
 
 interface ChatProjectRequest {
-  opportunity: GrokOpportunity
+  opportunity: Opportunity
   cdc: string
   messages: ChatMessage[]
   userMessage: string
 }
 
 // Construire le prompt pour l'IA critique
-const buildCriticalPrompt = (opportunity: GrokOpportunity, cdc: string, userMessage: string): string => {
+const buildCriticalPrompt = (opportunity: Opportunity, cdc: string, userMessage: string): string => {
   return `🎯 TU ES UNE IA CRITIQUE ET OBJECTIVE pour analyser des projets SaaS
 
 📋 CONTEXTE DU PROJET :
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier la clé API
-    if (!GROK_API_KEY) {
+    if (!XAI_API_KEY) {
       return NextResponse.json(
         { error: 'Configuration API manquante' },
         { status: 500 }
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch(GROK_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${GROK_API_KEY}`,
+        'Authorization': `Bearer ${XAI_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

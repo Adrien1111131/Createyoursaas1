@@ -100,21 +100,21 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
   // Fonction pour détecter les sous-titres
   const isSubtitle = (line: string) => {
     const keywords = [
-      'concept', 'workflow', 'stack', 'pratiques', 'features',
-      'sauvegarde', 'plan mode', 'act mode', 'qualité',
-      'priorités', 'architecture', 'dépendances', 'branches'
+      'résumé', 'cahier des charges', 'opportunité', 'architecture', 
+      'fonctionnalités', 'technologies', 'planning', 'sécurité',
+      'déploiement', 'marché français', 'réglementations', 'stratégie'
     ]
     return keywords.some(keyword => 
-      line.toLowerCase().includes(keyword) && line.length < 100
+      line.toLowerCase().includes(keyword) && line.length < 150
     )
   }
 
   // Fonction pour détecter les éléments importants
   const isImportant = (line: string) => {
     const importantKeywords = [
-      'important', 'sauvegarde', 'plan mode', 'act mode', 'backup',
-      'attention', 'warning', 'branches', 'version stable', 'qualité',
-      'git', 'commit', 'push', 'validation'
+      'important', 'attention', 'rgpd', 'cnil', 'sécurité',
+      'conformité', 'obligatoire', 'essentiel', 'critique',
+      'validation', 'test', 'sauvegarde'
     ]
     return importantKeywords.some(keyword => 
       line.toLowerCase().includes(keyword)
@@ -127,8 +127,8 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
       'React', 'Next.js', 'TypeScript', 'JavaScript', 'Node.js', 'MongoDB', 'PostgreSQL',
       'API', 'REST', 'GraphQL', 'JWT', 'OAuth', 'HTTPS', 'SSL',
       'responsive', 'mobile', 'desktop', 'SEO', 'performance',
-      'PLAN MODE', 'ACT MODE', 'vibe coding', 'backup', 'git',
-      'branches', 'commit', 'push', 'stable', 'MVP'
+      'RGPD', 'CNIL', 'français', 'francophone', 'France',
+      'sécurité', 'conformité', 'réglementation', 'MVP'
     ]
     
     let highlightedText = text
@@ -214,21 +214,21 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Settings className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-600">CDC optimisé pour le vibe coding</span>
+              <span className="text-sm text-gray-600">Cahier des charges structuré et clair</span>
             </div>
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-300">
-              ⚡ Vibe Coding Ready
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+              📋 Prêt pour le développement
             </Badge>
           </div>
           
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <CheckCircle className="h-4 w-4 text-green-500" />
-            <span>Commencez en PLAN MODE pour discuter de la stratégie</span>
+            <span>Document de travail pratique et actionnable</span>
           </div>
           
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <CheckCircle className="h-4 w-4 text-green-500" />
-            <span>Faites des sauvegardes régulières du projet</span>
+            <span>Adapté au marché français et aux réglementations</span>
           </div>
         </div>
       </div>

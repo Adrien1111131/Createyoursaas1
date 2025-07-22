@@ -1,72 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GrokOpportunity } from '@/lib/grok-service'
+import { Opportunity } from '@/lib/grok-service'
 
-const GROK_API_KEY = process.env.GROK_API_KEY
+const XAI_API_KEY = process.env.XAI_API_KEY || process.env.GROK_API_KEY
 const GROK_API_URL = 'https://api.x.ai/v1/chat/completions'
-const GROK_MODEL = 'grok-3-latest'
+const GROK_MODEL = 'grok-4-0709'
 
 interface AnalyzeProjectRequest {
-  opportunity: GrokOpportunity
+  opportunity: Opportunity
 }
 
 // Construire le prompt pour l'analyse approfondie du projet
-const buildAnalysisPrompt = (opportunity: GrokOpportunity): string => {
-  return `🚀 PROJET SAAS : ${opportunity.nom}
+const buildAnalysisPrompt = (opportunity: Opportunity): string => {
+  return `Analyse ce projet SaaS pour créer un cahier des charges clair et naturel :
 
-💡 CONCEPT
-- Description : ${opportunity.description}
-- Problème résolu : ${opportunity.probleme_resolu}
-- Marché : ${opportunity.type_marche}
-- Revenus estimés : ${opportunity.mrr_arr}
+PROJET : ${opportunity.nom}
+Description : ${opportunity.description}
+Problème résolu : ${opportunity.probleme_resolu}
+Marché cible : ${opportunity.type_marche}
+Revenus estimés : ${opportunity.mrr_arr}
+Stack technique : ${opportunity.stack_technique}
+Complexité : ${opportunity.complexite}
+Temps de développement : ${opportunity.temps_dev}
 
-⚡ WORKFLOW VIBE CODING
-- Commencer TOUJOURS en PLAN MODE
-- Discuter la stratégie avec l'IA
-- Valider l'approche avant de passer en ACT MODE
-- Faire des points de contrôle réguliers
+CONTEXTE FRANÇAIS :
+Ce projet vise spécifiquement le marché francophone. Il doit respecter les réglementations françaises (RGPD, CNIL) et s'adapter aux habitudes des utilisateurs français.
 
-🛠️ STACK TECHNIQUE
-- Technologies : ${opportunity.stack_technique}
-- Complexité : ${opportunity.complexite}
-- Temps estimé : ${opportunity.temps_dev}
-
-📋 BONNES PRATIQUES
-- Sauvegardes régulières du projet
-- Créer des branches pour les features importantes
-- Commits fréquents et bien nommés
-- Revenir à la dernière version stable si besoin
-
-🎯 FEATURES MVP
-- Liste courte et précise des fonctionnalités essentielles
-- Priorités claires
-- Estimations réalistes
-- Points de validation
-
-⚙️ ARCHITECTURE
-- Structure du projet claire et modulaire
-- Composants réutilisables
-- API endpoints bien définis
-- Base de données optimisée
-
-🔒 SÉCURITÉ & CONFORMITÉ
-- RGPD et CNIL
-- Authentification sécurisée
-- Protection des données
-- Backups automatisés
-
-🚀 DÉPLOIEMENT
-- Environnements (dev, staging, prod)
-- CI/CD pipeline
-- Monitoring
-- Scalabilité
-
-⚠️ POINTS D'ATTENTION :
-- Toujours commencer par planifier (PLAN MODE)
-- Sauvegarder régulièrement
-- Tester chaque feature
-- Valider avant de passer aux étapes suivantes
-
-📝 FORMAT : CDC adapté au vibe coding, clair et actionnable.`
+OBJECTIF :
+Créer un document de travail pratique qui guide le développement étape par étape, avec un langage naturel et accessible.`
 }
 
 export async function POST(request: NextRequest) {
@@ -81,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier la clé API
-    if (!GROK_API_KEY) {
+    if (!XAI_API_KEY) {
       return NextResponse.json(
         { error: 'Configuration API manquante' },
         { status: 500 }
@@ -94,7 +54,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch(GROK_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${GROK_API_KEY}`,
+        'Authorization': `Bearer ${XAI_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -102,21 +62,34 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `Tu es un expert en vibe coding et développement SaaS. 
+            content: `Tu es un chef de projet expérimenté qui rédige des cahiers des charges clairs et naturels.
 
-STYLE :
-- Ton direct et concis
-- Instructions claires et actionnables
-- Focus sur les bonnes pratiques
-- Approche étape par étape
+STYLE D'ÉCRITURE :
+- Langage naturel et fluide, comme si tu expliquais le projet à un collègue
+- Paragraphes bien structurés avec des transitions logiques
+- Éviter le jargon technique excessif
+- Ton professionnel mais accessible
 
-POINTS CLÉS :
-- Importance du PLAN MODE avant l'action
-- Sauvegardes régulières du code
-- Tests et validations fréquents
-- Documentation claire et concise
+STRUCTURE ATTENDUE :
 
-Génère un CDC adapté aux développeurs qui utilisent le vibe coding, en mettant l'accent sur la planification, les sauvegardes et la validation progressive.`
+1. RÉSUMÉ DU PROJET
+Présente le projet de manière claire et engageante. Explique pourquoi ce projet est important et comment il va aider les utilisateurs. Utilise un langage accessible qui permet à n'importe qui de comprendre l'enjeu.
+
+2. CAHIER DES CHARGES TECHNIQUE
+Détaille les aspects techniques de manière organisée :
+- Architecture et technologies choisies (avec justifications)
+- Fonctionnalités principales expliquées simplement
+- Contraintes techniques et solutions envisagées
+- Planning de développement réaliste
+
+3. OPPORTUNITÉ FRANCOPHONE
+Explique spécifiquement pourquoi ce projet a du sens sur le marché français :
+- Besoins spécifiques des utilisateurs français
+- Avantages concurrentiels sur ce marché
+- Réglementations françaises à respecter (RGPD, etc.)
+- Stratégie de lancement adaptée au contexte français
+
+IMPORTANT : Écris de manière fluide et naturelle, comme si tu présentais le projet lors d'une réunion. Évite les listes à puces excessives et privilégie des paragraphes bien rédigés.`
           },
           {
             role: 'user',

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +25,7 @@ interface FinalizedProject {
 export default function DevelopmentPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [project, setProject] = useState<FinalizedProject | null>(null)
   const [currentStep, setCurrentStep] = useState(0)
 
@@ -72,11 +73,22 @@ export default function DevelopmentPage() {
     if (savedProject) {
       const parsedProject = JSON.parse(savedProject)
       setProject(parsedProject)
+      
+      // Vérifier si l'utilisateur revient après un paiement réussi
+      const paymentStatus = searchParams.get('payment')
+      if (paymentStatus === 'success' && parsedProject.id) {
+        // Marquer le projet comme payé
+        localStorage.setItem(`paid_${parsedProject.id}`, 'true')
+        console.log(`✅ Paiement confirmé pour le projet ${parsedProject.nom}`)
+        
+        // Nettoyer l'URL
+        router.replace(`/project/${params.id}/development`)
+      }
     } else {
       // Rediriger vers la page d'accueil si pas de projet
       router.push('/')
     }
-  }, [params.id, router])
+  }, [params.id, router, searchParams])
 
   const handleBackToProject = () => {
     router.push(`/project/${params.id}`)

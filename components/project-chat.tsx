@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Send, Bot, User, CheckCircle, AlertTriangle } from "lucide-react"
-import { GrokOpportunity } from "@/lib/grok-service"
+import { Opportunity } from "@/lib/grok-service"
 
 interface ChatMessage {
   id: string
@@ -16,7 +16,7 @@ interface ChatMessage {
 }
 
 interface ProjectChatProps {
-  opportunity: GrokOpportunity
+  opportunity: Opportunity
   cdc: string
   onProjectReady: () => void
 }
