@@ -491,7 +491,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="pt-3">
+              <div className="pt-3 space-y-3">
                 <Button
                   size="lg"
                   onClick={handleSearch}
@@ -501,6 +501,23 @@ export default function HomePage() {
                   <span className="mr-2">{isLoading ? "⏳" : "🚀"}</span>
                   {isLoading ? "Recherche en cours..." : "Découvrir les opportunités"}
                   {!isLoading && <ChevronRight className="ml-2 h-4 w-4" />}
+                </Button>
+                
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span className="text-sm text-gray-500 font-medium">ou</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                </div>
+                
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => router.push('/my-project')}
+                  className="w-full py-4 text-base font-semibold border-2 border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300"
+                >
+                  <MessageCircle className="h-5 w-5 mr-2" />
+                  J'ai mon projet
+                  <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </div>

@@ -9,24 +9,45 @@ interface AnalyzeProjectRequest {
   opportunity: Opportunity
 }
 
-// Construire le prompt pour l'analyse approfondie du projet
+// Construire le prompt optimisé pour un CDC concis et actionnable
 const buildAnalysisPrompt = (opportunity: Opportunity): string => {
-  return `Analyse ce projet SaaS pour créer un cahier des charges clair et naturel :
+  return `Génère un guide de développement concis pour ce projet SaaS :
 
 PROJET : ${opportunity.nom}
 Description : ${opportunity.description}
-Problème résolu : ${opportunity.probleme_resolu}
-Marché cible : ${opportunity.type_marche}
-Revenus estimés : ${opportunity.mrr_arr}
-Stack technique : ${opportunity.stack_technique}
+Problème : ${opportunity.probleme_resolu}
+Stack : ${opportunity.stack_technique}
 Complexité : ${opportunity.complexite}
-Temps de développement : ${opportunity.temps_dev}
+Temps : ${opportunity.temps_dev}
+Type marché : ${opportunity.type_marche}
 
-CONTEXTE FRANÇAIS :
-Ce projet vise spécifiquement le marché francophone. Il doit respecter les réglementations françaises (RGPD, CNIL) et s'adapter aux habitudes des utilisateurs français.
+CONSIGNES STRICTES :
+1. DESCRIPTION DU PROJET (2-3 phrases max)
+   - Que fait exactement le produit
+   - Adaptations spécifiques pour le marché français si pertinentes
 
-OBJECTIF :
-Créer un document de travail pratique qui guide le développement étape par étape, avec un langage naturel et accessible.`
+2. ÉTAPES DE DÉVELOPPEMENT (liste numérotée claire)
+   - Étapes concrètes et actionables
+   - Ordre logique de développement
+   - 6-8 étapes maximum
+
+3. STACK TECHNIQUE PRÉCISE
+   - Frontend : [technologie exacte]
+   - Backend : [technologie exacte] 
+   - Base de données : [choix précis]
+   - APIs externes : [liste des APIs nécessaires]
+   - Authentification : [solution]
+   - Paiements : [si applicable]
+   - Hébergement : [recommandation]
+
+INTERDICTIONS :
+- Pas de blabla marketing
+- Pas de répétition des informations déjà connues
+- Pas d'analyse de marché (déjà fournie)
+- Pas de recommandations business
+- Seulement les infos techniques et étapes pratiques
+
+FORMAT : Texte structuré, direct, actionnable.`
 }
 
 export async function POST(request: NextRequest) {
@@ -62,34 +83,29 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `Tu es un chef de projet expérimenté qui rédige des cahiers des charges clairs et naturels.
+            content: `Tu es un développeur senior qui rédige des guides techniques concis et actionables.
 
-STYLE D'ÉCRITURE :
-- Langage naturel et fluide, comme si tu expliquais le projet à un collègue
-- Paragraphes bien structurés avec des transitions logiques
-- Éviter le jargon technique excessif
-- Ton professionnel mais accessible
+OBJECTIF : Fournir uniquement les informations pratiques pour développer le projet.
 
-STRUCTURE ATTENDUE :
+STRUCTURE OBLIGATOIRE :
+1. DESCRIPTION DU PROJET (2-3 phrases maximum)
+2. ÉTAPES DE DÉVELOPPEMENT (liste numérotée, 6-8 étapes max)
+3. STACK TECHNIQUE (format structuré avec technologies précises)
 
-1. RÉSUMÉ DU PROJET
-Présente le projet de manière claire et engageante. Explique pourquoi ce projet est important et comment il va aider les utilisateurs. Utilise un langage accessible qui permet à n'importe qui de comprendre l'enjeu.
+STYLE REQUIS :
+- Direct et technique, sans fioritures
+- Comme un README de projet GitHub
+- Pas de marketing ou de blabla
+- Informations concrètes et actionables uniquement
 
-2. CAHIER DES CHARGES TECHNIQUE
-Détaille les aspects techniques de manière organisée :
-- Architecture et technologies choisies (avec justifications)
-- Fonctionnalités principales expliquées simplement
-- Contraintes techniques et solutions envisagées
-- Planning de développement réaliste
+INTERDICTIONS STRICTES :
+- Pas d'introduction longue
+- Pas d'analyse de marché
+- Pas de recommandations business
+- Pas de répétitions
+- Pas de paragraphes verbeux
 
-3. OPPORTUNITÉ FRANCOPHONE
-Explique spécifiquement pourquoi ce projet a du sens sur le marché français :
-- Besoins spécifiques des utilisateurs français
-- Avantages concurrentiels sur ce marché
-- Réglementations françaises à respecter (RGPD, etc.)
-- Stratégie de lancement adaptée au contexte français
-
-IMPORTANT : Écris de manière fluide et naturelle, comme si tu présentais le projet lors d'une réunion. Évite les listes à puces excessives et privilégie des paragraphes bien rédigés.`
+FORMAT : Texte structuré, concis, technique.`
           },
           {
             role: 'user',
@@ -97,8 +113,8 @@ IMPORTANT : Écris de manière fluide et naturelle, comme si tu présentais le p
           }
         ],
         stream: false,
-        temperature: 0.3,
-        max_tokens: 4000
+        temperature: 0.1,
+        max_tokens: 1500
       })
     })
 

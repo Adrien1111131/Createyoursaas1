@@ -100,9 +100,9 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
   // Fonction pour détecter les sous-titres
   const isSubtitle = (line: string) => {
     const keywords = [
-      'résumé', 'cahier des charges', 'opportunité', 'architecture', 
-      'fonctionnalités', 'technologies', 'planning', 'sécurité',
-      'déploiement', 'marché français', 'réglementations', 'stratégie'
+      'description', 'étapes', 'développement', 'stack', 'technique',
+      'frontend', 'backend', 'base de données', 'apis', 'authentification',
+      'paiements', 'hébergement', 'technologies'
     ]
     return keywords.some(keyword => 
       line.toLowerCase().includes(keyword) && line.length < 150
@@ -125,10 +125,12 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
   const highlightKeywords = (text: string) => {
     const keywords = [
       'React', 'Next.js', 'TypeScript', 'JavaScript', 'Node.js', 'MongoDB', 'PostgreSQL',
-      'API', 'REST', 'GraphQL', 'JWT', 'OAuth', 'HTTPS', 'SSL',
-      'responsive', 'mobile', 'desktop', 'SEO', 'performance',
-      'RGPD', 'CNIL', 'français', 'francophone', 'France',
-      'sécurité', 'conformité', 'réglementation', 'MVP'
+      'API', 'REST', 'GraphQL', 'JWT', 'OAuth', 'HTTPS', 'SSL', 'Stripe', 'Supabase',
+      'Vercel', 'Netlify', 'Firebase', 'Prisma', 'NextAuth', 'Tailwind', 'Vue.js',
+      'Express', 'FastAPI', 'Django', 'Laravel', 'MySQL', 'Redis', 'Docker',
+      'responsive', 'mobile', 'desktop', 'SEO', 'performance', 'MVP', 'SaaS',
+      'RGPD', 'CNIL', 'français', 'francophone', 'France', 'B2B', 'B2C',
+      'sécurité', 'conformité', 'réglementation', 'authentification', 'paiements'
     ]
     
     let highlightedText = text
@@ -214,21 +216,21 @@ export function CDCFormatter({ content }: CDCFormatterProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Settings className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Cahier des charges structuré et clair</span>
+              <span className="text-sm text-gray-600">Guide technique concis et actionnable</span>
             </div>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
-              📋 Prêt pour le développement
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+              🚀 Prêt à développer
             </Badge>
           </div>
           
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <CheckCircle className="h-4 w-4 text-green-500" />
-            <span>Document de travail pratique et actionnable</span>
+            <span>Étapes de développement claires et structurées</span>
           </div>
           
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <CheckCircle className="h-4 w-4 text-green-500" />
-            <span>Adapté au marché français et aux réglementations</span>
+            <span>Stack technique précise et moderne</span>
           </div>
         </div>
       </div>
